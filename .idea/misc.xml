@@ -11,6 +11,9 @@
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/helloworld/pom.xml" />
+        <option value="$PROJECT_DIR$/config/pom.xml" />
+        <option value="$PROJECT_DIR$/auto-config/pom.xml" />
+        <option value="$PROJECT_DIR$/logging/pom.xml" />
       </list>
     </option>
   </component>
