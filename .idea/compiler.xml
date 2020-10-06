@@ -8,8 +8,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="helloworld" />
         <module name="logging" />
+        <module name="test2" />
         <module name="config" />
-        <module name="auto-config" />
         <module name="web" />
         <module name="springboot" />
       </profile>
@@ -17,6 +17,7 @@
     <bytecodeTargetLevel>
       <module name="auto-config" target="11" />
       <module name="springboot" target="1.5" />
+      <module name="test2" target="6" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

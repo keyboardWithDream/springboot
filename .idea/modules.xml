@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/auto-config/auto-config.iml" filepath="$PROJECT_DIR$/auto-config/auto-config.iml" />
       <module fileurl="file://$PROJECT_DIR$/springboot.iml" filepath="$PROJECT_DIR$/springboot.iml" />
     </modules>
   </component>
