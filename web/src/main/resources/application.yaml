@@ -2,3 +2,9 @@ server:
   servlet:
     context-path: /
   port: 80
+
+spring:
+  messages:
+    basename: i18n.login
+  thymeleaf:
+    cache: false

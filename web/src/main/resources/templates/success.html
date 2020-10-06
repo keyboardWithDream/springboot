@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Success</title>
+</head>
+<body>
+<h1>Success!</h1>
+<!-- th:text 将<h1>中的文本内容设置为指定的值 -->
+<h1 id="h101" class="myH1" th:id="msg" th:class="myMsg" th:text="${msg}">这是显示欢迎信息</h1>
+<hr>
+<div th:text="${msg}"></div>
+<div th:utext="${msg}"></div>
+<hr>
+<h4 th:each="user : ${users}" th:text="${user}"></h4>
+<hr>
+<h4>
+    <span th:each="user : ${users}">[[${user}]]</span>
+</h4>
+</body>
+</html>
