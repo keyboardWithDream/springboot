@@ -8,3 +8,5 @@ spring:
     basename: i18n.login
   thymeleaf:
     cache: false
+  mvc:
+    date-format: yyyy-MM-dd

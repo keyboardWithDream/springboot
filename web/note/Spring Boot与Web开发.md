@@ -410,3 +410,74 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
 ==**注意**: 其方法名必须为 `localeResolver`==
 
+---
+
+## 五. 自定义拦截器
+
+拦截器需要实现`HandlerInterceptor`接口, 根据业务需求重写其中的方法
+
+在目标方法前执行: `preHandle`
+
+在目标方法执行后响应视图前执行: `postHandle`
+
+在响应视图后执行: `afterCompletion`
+
+根据拦截用户是否登录需求示例:
+
+```java
+public class LoginHandlerInterceptor implements HandlerInterceptor {
+    
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        Object user = request.getSession().getAttribute("loginUser");
+        if (user == null){
+            //未登录, 返回登录页面
+            request.setAttribute("msg", "没有权限,请先登录");
+            request.getRequestDispatcher("/index.html").forward(request, response);
+            return false;
+        }else {
+            //已登录
+            return true;
+        }
+
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    }
+}
+```
+
+在MVC扩展配置类中, 添加自定义的拦截器
+
+```java
+@Configuration
+public class MyMvcConfig extends WebMvcConfigurerAdapter {
+
+    @Bean
+    public WebMvcConfigurerAdapter webMvcConfigurerAdapter(){
+        return new WebMvcConfigurerAdapter() {
+
+            //配置拦截器
+            @Override
+            public void addInterceptors(InterceptorRegistry registry) {
+                registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns("/index.html","/user/login");
+            }
+
+            @Override
+            public void addViewControllers(ViewControllerRegistry registry) {
+                registry.addViewController("/").setViewName("login");
+                registry.addViewController("/index.html").setViewName("login");
+                registry.addViewController("/main.html").setViewName("dashboard");
+            }
+        };
+    }
+}
+```
+
+配置需要拦截的路径, 排除拦截的路径即可.
+
