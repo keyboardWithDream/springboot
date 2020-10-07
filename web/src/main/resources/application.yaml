@@ -1,7 +1,9 @@
 server:
+  port: 80
   servlet:
     context-path: /springboot
-  port: 80
+  tomcat:
+    uri-encoding: utf-8
 
 spring:
   messages:

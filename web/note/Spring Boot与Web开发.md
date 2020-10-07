@@ -481,3 +481,68 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
 
 配置需要拦截的路径, 排除拦截的路径即可.
 
+---
+
+## 六. SpringBoot错误处理
+
+### 1. SpringBoot默认的错误处理
+
+当PC浏览器访问服务器或发送请求时发生错误, SpringBoot会默认返回一个空白页面![default-errorPage](D:\Code\springboot\web\note\images\default-errorPage.png)
+
+---
+
+如果是其它客户端, 默认响应一个`json`数据
+
+![default-errorJson](D:\Code\springboot\web\note\images\default-errorJson.png)
+
+---
+
+### 2. 定制错误响应
+
+1. 定制错误页面
+
+   有模板引擎的情况下:将错误页面命名为`错误状态码.html`, 并放在模板引擎的`/error`文件夹下, 如发生此状态码, 即可响应对应的html页面 --`error/错误状态码.html`.
+
+   * 如命名为`4xx.html`则表示已4开头的错误状态码都响应此页面(==优先寻找精确的状态码页面==)
+
+   * 获取错误信息
+
+     `timestamp`: 时间戳
+
+     `satatus`: 状态码
+     
+     `error`: 错误提示
+     
+     `exception`: 异常对象      
+     
+     `message`: 异常消息
+     
+     `errors`: `JSR303`数据校验错误
+
+   ```html
+   <h1>status:[[${status}]]</h1>
+   <h2>status:[[${timestamp}]]</h2>
+   ```
+
+   
+
+2. 定制错误`json`数据
+
+   通过定义一个异常处理控制器, 捕获需要处理的异常信息, 通过`json`返回, 但没有自适应效果(PC和其它客户端都会返回`json`数据)
+
+   ```java
+   @ControllerAdvice
+   public class MyExceptionHandler {
+   
+       @ResponseBody
+       @ExceptionHandler(HelloException.class)
+       public Map<String, Object> handleException(Exception e){
+           Map<String, Object> map = new HashMap<>();
+           map.put("code", "hello.notExist");
+           map.put("message", e.getMessage());
+           return map;
+       }
+   }
+   ```
+
+   ---

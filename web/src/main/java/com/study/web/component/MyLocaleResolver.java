@@ -14,6 +14,7 @@ import java.util.Locale;
  */
 public class MyLocaleResolver implements LocaleResolver {
 
+
     @Override
     public Locale resolveLocale(HttpServletRequest httpServletRequest) {
         Locale locale = null;
