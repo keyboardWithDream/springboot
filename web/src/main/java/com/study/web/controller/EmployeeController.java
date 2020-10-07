@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
+import org.springframework.web.bind.annotation.PutMapping;
 import java.util.Collection;
 
 /**
@@ -47,8 +48,40 @@ public class EmployeeController {
         return "emp/add";
     }
 
+    /**
+     * 添加员工信息
+     * @param employee 员工信息
+     * @return 查询页面
+     */
     @PostMapping("/emp")
     public String addEmp(Employee employee){
+        employeeDao.save(employee);
+        return "redirect:/emps";
+    }
+
+
+    /**
+     * 通过id查询员工并返回到修改页面
+     * @param id 员工id
+     * @param model 返回员工信息
+     * @return 修改页面
+     */
+    @GetMapping("/emp/{id}")
+    public String toEditPage(@PathVariable("id") Integer id, Model model){
+        model.addAttribute("emp", employeeDao.get(id));
+        model.addAttribute("depts", departmentDao.getDepartments());
+        //返回修改页面
+        return "emp/add";
+    }
+
+
+    /**
+     * 修改用户
+     * @param employee 用户信息
+     * @return 查询页面
+     */
+    @PutMapping("/emp")
+    public String updateEmp(Employee employee){
         employeeDao.save(employee);
         return "redirect:/emps";
     }
