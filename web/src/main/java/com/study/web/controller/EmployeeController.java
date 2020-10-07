@@ -6,10 +6,8 @@ import com.study.web.domian.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.Collection;
 
 /**
@@ -83,6 +81,18 @@ public class EmployeeController {
     @PutMapping("/emp")
     public String updateEmp(Employee employee){
         employeeDao.save(employee);
+        return "redirect:/emps";
+    }
+
+
+    /**
+     * 员工删除
+     * @param id 员工id
+     * @return 员工查询页面
+     */
+    @DeleteMapping("/emp/{id}")
+    public String deleteEmp(@PathVariable("id") Integer id){
+        employeeDao.delete(id);
         return "redirect:/emps";
     }
 }
