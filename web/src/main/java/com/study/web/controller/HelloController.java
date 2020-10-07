@@ -1,7 +1,9 @@
 package com.study.web.controller;
 
+import com.study.web.exception.HelloException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Arrays;
 import java.util.Map;
@@ -15,7 +17,10 @@ public class HelloController {
 
     @ResponseBody
     @RequestMapping("/hello")
-    public String hello(){
+    public String hello(@RequestParam("s") String s){
+        if ("h".equals(s)){
+            throw new HelloException();
+        }
         return "Hello World";
     }
 

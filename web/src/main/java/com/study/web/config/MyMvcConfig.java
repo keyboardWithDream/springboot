@@ -23,10 +23,10 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
         return new WebMvcConfigurerAdapter() {
 
             //配置拦截器
-            @Override
-            public void addInterceptors(InterceptorRegistry registry) {
-                registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns("/index.html","/user/login", "/");
-            }
+//            @Override
+//            public void addInterceptors(InterceptorRegistry registry) {
+//                registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").excludePathPatterns("/index.html","/user/login", "/");
+//            }
 
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
