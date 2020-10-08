@@ -1,7 +1,6 @@
 package com.study.mybatis.dao;
 
 import com.study.mybatis.domain.Employee;
-import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
