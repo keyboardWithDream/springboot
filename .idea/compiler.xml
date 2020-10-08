@@ -8,10 +8,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="helloworld" />
-        <module name="logging" />
         <module name="test2" />
-        <module name="config" />
         <module name="web" />
+        <module name="logging" />
+        <module name="data-mybatis" />
+        <module name="data-jdbc" />
+        <module name="config" />
         <module name="springboot" />
       </profile>
     </annotationProcessing>
@@ -25,6 +27,8 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="auto-config" options="-parameters" />
       <module name="config" options="-parameters" />
+      <module name="data-jdbc" options="-parameters" />
+      <module name="data-mybatis" options="-parameters" />
       <module name="helloworld" options="-parameters" />
       <module name="logging" options="-parameters" />
       <module name="web" options="-parameters" />
