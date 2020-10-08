@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://10.39.2.153:3306/jdbc
+    username: root
+    password: Hhn004460
+  jpa:
+    hibernate:
+      # \u66F4\u65B0\u6216\u521B\u5EFA\u6570\u636E\u8868\u7ED3\u6784
+      ddl-auto: update
+    # \u5728\u63A7\u5236\u53F0\u663E\u793Asql
+    show-sql: true
+
+server:
+  port: 80
+  servlet:
+    context-path: /springboot
