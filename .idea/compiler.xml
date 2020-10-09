@@ -16,11 +16,16 @@
         <module name="data-jdbc" />
         <module name="config" />
         <module name="springboot" />
+        <module name="study-spring-boot-starter-autoconfiguer" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="auto-config" target="11" />
       <module name="springboot" target="1.5" />
+      <module name="starter" target="1.5" />
+      <module name="stduy-springboot-starter" target="1.5" />
+      <module name="study-spring-boot-starter" target="1.5" />
+      <module name="study-spring-boot-starter-autoconfiguer" target="11" />
       <module name="test2" target="6" />
     </bytecodeTargetLevel>
   </component>
@@ -33,6 +38,7 @@
       <module name="data-mybatis" options="-parameters" />
       <module name="helloworld" options="-parameters" />
       <module name="logging" options="-parameters" />
+      <module name="study-spring-boot-starter-autoconfiguer" options="-parameters" />
       <module name="web" options="-parameters" />
     </option>
   </component>
