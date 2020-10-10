@@ -39,4 +39,12 @@ public interface EmployeeDao {
      */
     @Insert("insert into employee(lastName, email, gender, d_id) values (#{lastName}, #{email}, #{gender}, #{dId})")
     void insertEmp(Employee employee);
+
+    /**
+     * 通过lastName查询员工
+     * @param lastName lastName
+     * @return 员工信息
+     */
+    @Select("select * from employee where lastName=#{lastName}")
+    Employee getEmpByLastName(String lastName);
 }

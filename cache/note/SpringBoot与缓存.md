@@ -57,11 +57,11 @@
 | KeyGenerator     | 缓存数据时`key`生成策略                                      |
 | serialize        | 缓存数据时`value`序列化策略                                  |
 
-### 使用
+### 使用缓存
 
 #### 选择的场景启动器
 
-`cache`场景
+`cache`场景, 在没有引入其它`provider`时, SpringBoot默认使用`ConcurrentMapCache` (CacheManager)
 
 #### 开启注解
 
@@ -80,7 +80,9 @@ public class CacheApplication {
 }
 ```
 
-#### 添加注解
+#### 注解使用
+
+##### `@Cacheable`
 
 在`Service`中的方法上添加`@Cacheable`注解, 将返回值添加到缓存中
 
@@ -101,10 +103,169 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeDao employeeDao;
 
-    @Cacheable(cacheNames = {"emp"}, key = "#id", condition = "#id>0", unless = "#result==null")
+    /**
+    * @Cacheable
+    */
+    @Cacheable(cacheNames = {"emp"}, key = "#root.method.name+'['+#id+']'", condition = "#root.method eq 'getEmp' and #id=1", unless = "#result==null")
     @Override
     public Employee getEmp(Integer id) {
         return employeeDao.getEmpById(id);
     }
 }
 ```
+
+---
+
+##### `@CachePut`
+
+在方法上添加`@CachePut`注解, ==先调用目标方法(不在缓存组件中查询)==, 然后缓存其目标方法的结果
+
+在`Key`中指定相同的值, 可达到同步更新缓存的作用
+
+```java
+/**
+* @CachePut
+*/
+@CachePut(cacheNames = {"emp"}, key = "#result.id")
+@Override
+public Employee updateEmp(Employee employee) {
+    employeeDao.updateEmp(employee);
+    return employee;
+}
+```
+
+---
+
+##### `@CacheEvict`
+
+在方法上添加`@CacheEvict`注解, 可清除缓存
+
+可以通过`key`指定需要清除的数据, 默认为参数值
+
+`allEntries`属性指定为`true`时, 表示清空当前缓存组件的所有数据
+
+`beforInvocation`属性指定为`ture`时, 表示在方法执行之前清除, 默认为`fales`(方法执行异常, 缓存也会被清除)
+
+```java
+/**
+* @CacheEvict
+*/
+@CacheEvict(cacheNames = {"emp"}, key = "#id")
+@Override
+public void deleteEmp(Integer id) {
+    employeeDao.deleteEmpById(id);
+}
+```
+
+---
+
+##### `@Caching`
+
+可通过`@Caching`注解配置复杂的存贮(多个`@Cacheable` , `@CachePut`, `@CacheEvict`)将多个注解相组合.
+
+```java
+/**
+* @Caching
+*/
+@Caching(
+        cacheable = {
+               @Cacheable(cacheNames = "emp", key = "#lastName")
+        },
+        put = {
+                @CachePut(cacheNames = "emp", key = "#result.id"),
+                @CachePut(cacheNames = "emp", key = "#result.email")
+        }
+)
+@Override
+public Employee getEmpByLastName(String lastName) {
+    return employeeDao.getEmpByLastName(lastName);
+}
+```
+
+---
+
+##### `@CacheConfig`
+
+通过`@CacheConfig`注解可以抽取本类中公共的`Cache`属性, 如 指定组件, `key`生成策略 等...
+
+```java
+/**
+* @CacheConfig
+*/
+@CacheConfig(cacheNames = "emp")
+@Service
+public class EmployeeServiceImpl implements EmployeeService {
+	...
+}
+```
+
+---
+
+#### 添加`keyGenerator`
+
+创建配置类, 将返回`keyGenerator`接口的实现类(此处匿名实现), 将其命名.
+
+需要重写`generate()`方法, 参数为,目标对象 ,方法 , 参数列表. --- 方法返回值为生成`key`的字符串.
+
+```java
+@Configuration
+public class MyCacheConfig {
+
+    @Bean("myKeyGenerator")
+    public KeyGenerator keyGenerator(){
+        return new KeyGenerator() {
+            @Override
+            public Object generate(Object o, Method method, Object... objects) {
+                return method.getName()+"["+ Arrays.asList(objects).toString()+']';
+            }
+        };
+    }
+}
+```
+
+在`@Cacheable`注解中使用`keyGenerator`属性指定自己添加的策略
+
+```java
+@Cacheable(cacheNames = {"emp"}, keyGenerator = "myKeyGenerator")
+@Override
+public Employee getEmp(Integer id) {
+    return employeeDao.getEmpById(id);
+}
+```
+
+### 运行流程
+
+`@Cacheable`标注的方法执行前, 检查缓存中是否有对应的数据
+
+1. 方法运行之前, 先去查询`Cache`(缓存组件), 按照`cacheNames`指定的名字获取 ->`CacheManager`先获取相应的缓存, 如果是第一次获取缓存(没有`Cache`组件),`CacheManager`会将缓存组件自动创建
+
+2. 使用`key`在`Cache`组件中查询缓存的内容, 默认为参数名(`key`是按照策略生成的: 默认使用`keyGenerator`的实现类`SimpleKeyGenerator`生成)
+
+3. 如果没有查到对应`key`值的缓存数据, 就调用目标方法, 并将目标方法返回的结果放入缓存.
+
+   如果查到对应`key`值的缓存数据, 就直接返回结果, 就不再调用目标方法
+
+#### 流程核心
+
+1. 使用`CacheManager`按照名字得到`Cache`组件
+2. `key`使用`keyGenerator`生成, 默认是`SimleKeyGenerator`
+
+---
+
+### Cache SpEL available metadata
+
+`root`为当前目标方法
+
+| Name         | Location             | Describe                                         | Examples                                |
+| ------------ | -------------------- | ------------------------------------------------ | --------------------------------------- |
+| methodName   | root object          | 当前被调用的方法名                               | `#root.methodName`                      |
+| mehtod       | root object          | 当前被调用的方法                                 | `#root.method.name`                     |
+| target       | root object          | 当前被调用的目标对象                             | `#root.target`                          |
+| targetClass  | root object          | 当前被调用的目标对象类                           | `#root.targetClass`                     |
+| args         | root object          | 当前被调用的方法的参数列表                       | `#root.args[0]`                         |
+| caches       | root object          | 当前方法调用使用的缓存列表, 即指定的`cacheNames` | `#root.caches[0].name`                  |
+| argumentName | evaluation   context | 方法参数的名字                                   | `#参数名` 或 `#p0`, `#a0` - 0为参数索引 |
+| result       | evaluation context   | 方法执行后的返回值                               | `#result`                               |
+
+---
+
