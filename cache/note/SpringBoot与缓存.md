@@ -284,3 +284,173 @@ public Employee getEmp(Integer id) {
 
 ### 配置Reids
 
+在主配置文件中指定reids服务器主机
+
+```properties
+#redis配置 Lettuce 是一个可伸缩线程安全的 Redis 客户端，多个线程可以共享同一个 RedisConnection，它利用优秀 netty NIO 框架来高效地管理多个连接
+spring.redis.host=192.168.0.172
+spring.redis.port=6379
+spring.redis.password=
+# 连接超时时间（毫秒）
+spring.redis.timeout=36000ms
+# Redis默认情况下有16个分片，这里配置具体使用的分片，默认是0
+spring.redis.database=0
+# 连接池最大连接数（使用负值表示没有限制） 默认 8
+spring.redis.lettuce.pool.max-active=8
+# 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+spring.redis.lettuce.pool.max-wait=-1ms
+# 连接池中的最大空闲连接 默认 8
+spring.redis.lettuce.pool.max-idle=8
+# 连接池中的最小空闲连接 默认 0
+spring.redis.lettuce.pool.min-idle=0
+```
+
+### 基本操作
+
+操作字符串使用`StringRedisTemplate`类
+
+将`StringRedisTemplate`自动注入, 调用`ops`相关方法
+
+```java
+@SpringBootTest
+class CacheApplicationTests {
+    
+   @Autowired
+   StringRedisTemplate stringRedisTemplate;
+
+   @Test
+   void contextLoads() {
+      //操作字符串
+      //保存数据
+      stringRedisTemplate.opsForValue().append("msg", "hello");
+      //读取数据
+      String msg = stringRedisTemplate.opsForValue().get("msg");
+       
+      //操作列表
+      stringRedisTemplate.opsForList().leftPush("myList", "1");
+      stringRedisTemplate.opsForList().leftPush("myList", "2");
+      stringRedisTemplate.opsForList().leftPush("myList", "3");
+   }
+
+}
+```
+
+---
+
+操作对象使用`RedisTemplate`类, 其对象需要是现实序列化接口`Serializable`
+
+将`StringRedisTemplate`自动注入, 调用相关方法
+
+```java
+@SpringBootTest
+class CacheApplicationTests {
+
+   @Autowired
+   RedisTemplate<Object, Object> redisTemplate;
+
+   @Test
+   void contextLoads() {
+      //保存一个Employee对象, 指定key为emp-1
+      Employee employee = new Employee(0, "admin", "123@qq.com", 0, 0);
+      redisTemplate.opsForValue().set("emp-1", employee);
+   }
+}
+```
+
+在Redis数据库中得到的结果如图:
+
+![ser](D:\Code\springboot\cache\note\images\ser.png)
+
+**因为对象通过序列化保存到Redis, 所以内容不方便阅读, 我们可以通过自定义序列化器, 将对象转换为`Json`数据格式进行存储, 方便阅读其内容**
+
+#### 自定义序列化器
+
+创建一个Redis的配置类, 将自定义的`RedisTemplate`注入到容器中
+
+`RedisTemplate<T, V>`中的泛型`V`为需要序列化的类
+
+`Jackson2JsonRedisSerializer`将提供的序列化器设置在`RedisTemplate`中并返回
+
+```java
+@Configuration
+public class MyRedisConfig {
+
+    /**
+     * 自定义序列化器
+     * 将对象序列化为json数据
+     * @param redisConnectionFactory redisConnectionFactory
+     * @return RedisTemplate
+     * @throws UnknownHostException 异常
+     */
+     @Bean
+    public RedisTemplate<Object, Employee> redisTemplate(RedisConnectionFactory redisConnectionFactory) throws UnknownHostException {
+        RedisTemplate<Object, Employee> template = new RedisTemplate<Object, Employee>();
+        template.setConnectionFactory(redisConnectionFactory);
+        Jackson2JsonRedisSerializer<Employee> serializer = new Jackson2JsonRedisSerializer<Employee>(Employee.class);
+        template.setDefaultSerializer(serializer);
+        return template;
+    }
+}
+```
+
+在使用时自动注入的`RedisTemplate<T, V>`就成为了我们自己定义的`template`
+
+```java
+@SpringBootTest
+class CacheApplicationTests {
+
+    /**
+    * 最好加上配置的泛型
+    */
+   @Autowired
+   RedisTemplate<Object, Employee> redisTemplate;
+
+   @Test
+   void contextLoads() {
+      Employee employee = new Employee(0, "admin", "123@qq.com", 0, 0);
+      redisTemplate.opsForValue().set("emp-1", employee);
+   }
+}
+```
+
+在Redis数据库中保存的结果即为`Json`数据, 方便程序员阅读
+
+![myser](D:\Code\springboot\cache\note\images\myser.png)
+
+---
+
+#### 自定义CacheManager
+
+需要导入依赖坐标
+
+```xml
+<dependency>
+   <groupId>com.fasterxml.jackson.datatype</groupId>
+   <artifactId>jackson-datatype-jsr310</artifactId>
+</dependency>
+```
+
+实现自定义CacheManager
+
+```java
+/**
+ * 自定义RedisCacheManager
+ * @param redisConnectionFactory redisConnectionFactory
+ * @return CacheManager
+ */
+@Bean
+public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+    //初始化一个RedisCacheWriter
+    RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory);
+    //设置CacheManager的值序列化方式为json序列化
+    RedisSerializer<Object> jsonSerializer = new GenericJackson2JsonRedisSerializer();
+    RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair.fromSerializer(jsonSerializer);
+    RedisCacheConfiguration defaultCacheConfig=RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(pair);
+    //设置默认超过期时间是30秒
+    defaultCacheConfig.entryTtl(Duration.ofSeconds(30));
+    //初始化RedisCacheManager
+    return new RedisCacheManager(redisCacheWriter, defaultCacheConfig);
+}
+```
+
+当实现了自定义的CacheManager后，我们就可以使用注解对业务进行开发.
