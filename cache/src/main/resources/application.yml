@@ -4,6 +4,8 @@ spring:
     url: jdbc:mysql://localhost:3306/cache?serverTimezone=UTC
     username: root
     password: Hhn004460
+  redis:
+    host: 10.39.2.153
 
 server:
   port: 80
@@ -20,3 +22,4 @@ logging:
   level:
     -com.study.cache:
       debug
+debug: true

@@ -61,7 +61,7 @@
 
 #### 选择的场景启动器
 
-`cache`场景, 在没有引入其它`provider`时, SpringBoot默认使用`ConcurrentMapCache` (CacheManager)
+`cache`场景, 在没有引入其它`provider`时, ==SpringBoot默认使用`ConcurrentMapCache` (CacheManager)==
 
 #### 开启注解
 
@@ -144,7 +144,7 @@ public Employee updateEmp(Employee employee) {
 
 `allEntries`属性指定为`true`时, 表示清空当前缓存组件的所有数据
 
-`beforInvocation`属性指定为`ture`时, 表示在方法执行之前清除, 默认为`fales`(方法执行异常, 缓存也会被清除)
+`beforInvocation`属性指定为`ture`时, 表示在方法执行之前清除, 默认为`fales`==(方法执行异常, 缓存也会被清除)==
 
 ```java
 /**
@@ -268,4 +268,19 @@ public Employee getEmp(Integer id) {
 | result       | evaluation context   | 方法执行后的返回值                               | `#result`                               |
 
 ---
+
+## 使用Redis
+
+### spring-boot-starter-redis
+
+引入Redis的starter
+
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-redis</artifactId>
+</dependency>
+```
+
+### 配置Reids
 

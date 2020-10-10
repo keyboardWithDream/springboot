@@ -1,9 +1,11 @@
 package com.study.cache.domain;
 
+import java.io.Serializable;
+
 /**
  * @author Harlan
  */
-public class Department {
+public class Department implements Serializable {
 	
 	private Integer id;
 	private String departmentName;
