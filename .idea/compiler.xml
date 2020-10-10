@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="helloworld" />
         <module name="test2" />
+        <module name="cache" />
         <module name="web" />
         <module name="logging" />
         <module name="data-jpa" />
@@ -20,25 +21,18 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="auto-config" target="11" />
-      <module name="springboot" target="1.5" />
-      <module name="starter" target="1.5" />
-      <module name="stduy-springboot-starter" target="1.5" />
-      <module name="study-spring-boot-starter" target="1.5" />
-      <module name="study-spring-boot-starter-autoconfiguer" target="11" />
-      <module name="test2" target="6" />
+      <module name="springboot" target="11" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="auto-config" options="-parameters" />
+      <module name="cache" options="-parameters" />
       <module name="config" options="-parameters" />
       <module name="data-jdbc" options="-parameters" />
       <module name="data-jpa" options="-parameters" />
       <module name="data-mybatis" options="-parameters" />
       <module name="helloworld" options="-parameters" />
       <module name="logging" options="-parameters" />
-      <module name="study-spring-boot-starter-autoconfiguer" options="-parameters" />
       <module name="web" options="-parameters" />
     </option>
   </component>
