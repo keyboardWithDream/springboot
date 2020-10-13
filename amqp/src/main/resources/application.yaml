@@ -1,0 +1,13 @@
+server:
+  port: 80
+  servlet:
+    context-path: /
+
+# \u914D\u7F6ERabbitMQ
+spring:
+  rabbitmq:
+    host: 172.20.10.2
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
