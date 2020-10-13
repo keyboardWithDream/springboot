@@ -228,7 +228,7 @@ public void receive(){
 
 ---
 
-### 序列化为Json数据
+#### 序列化为Json数据
 
 编写配置类, 使用`Jackson2JsonMessageConverter`替换原有的序列化, 并注入到容器中
 
@@ -247,4 +247,42 @@ public class MyAmqpConfig {
 其在队列中的结果为:![json](images\json.png)
 
 ---
+
+### `AmqpAdmin`
+
+使用`AmqpAdmin`可以通过java代码来实现`Exchange`, `Binding`, `Queue` 的创建和删除
+
+```java
+@SpringBootTest
+class AmqpApplicationTests {
+
+   @Autowired
+   AmqpAdmin amqpAdmin;
+
+   /**
+    * 创建交换器
+    */
+   @Test
+   public void createExchange(){
+      amqpAdmin.declareExchange(new DirectExchange("exchange.amqpAdmin"));
+   }
+
+   /**
+    * 创建队列
+    */
+   @Test
+   public void createQueue(){
+      amqpAdmin.declareQueue(new Queue("queue.amqpAdmin", true));
+   }
+
+   /**
+    * 绑定规则
+    */
+   @Test
+   public void creatBinding(){
+      amqpAdmin.declareBinding(new Binding("queue.amqpAdmin", Binding.DestinationType.QUEUE, "exchange.amqpAdmin", "queue.#", null));
+   }
+
+}
+```
 
