@@ -22,6 +22,7 @@
         <option value="$PROJECT_DIR$/amqp/pom.xml" />
         <option value="$PROJECT_DIR$/elastic-search/pom.xml" />
         <option value="$PROJECT_DIR$/task/pom.xml" />
+        <option value="$PROJECT_DIR$/security/pom.xml" />
       </list>
     </option>
   </component>

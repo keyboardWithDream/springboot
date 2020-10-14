@@ -14,6 +14,7 @@
         <module name="data-jdbc" />
         <module name="springboot" />
         <module name="test2" />
+        <module name="security" />
         <module name="elastic-search" />
         <module name="task" />
         <module name="web" />
@@ -38,6 +39,7 @@
       <module name="elastic-search" options="-parameters" />
       <module name="helloworld" options="-parameters" />
       <module name="logging" options="-parameters" />
+      <module name="security" options="-parameters" />
       <module name="task" options="-parameters" />
       <module name="web" options="-parameters" />
     </option>
