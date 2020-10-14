@@ -8,16 +8,17 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="helloworld" />
-        <module name="test2" />
         <module name="cache" />
-        <module name="web" />
         <module name="amqp" />
-        <module name="logging" />
         <module name="data-jpa" />
-        <module name="data-mybatis" />
         <module name="data-jdbc" />
-        <module name="config" />
         <module name="springboot" />
+        <module name="test2" />
+        <module name="elastic-search" />
+        <module name="web" />
+        <module name="logging" />
+        <module name="data-mybatis" />
+        <module name="config" />
         <module name="study-spring-boot-starter-autoconfiguer" />
       </profile>
     </annotationProcessing>
@@ -33,6 +34,7 @@
       <module name="data-jdbc" options="-parameters" />
       <module name="data-jpa" options="-parameters" />
       <module name="data-mybatis" options="-parameters" />
+      <module name="elastic-search" options="-parameters" />
       <module name="helloworld" options="-parameters" />
       <module name="logging" options="-parameters" />
       <module name="web" options="-parameters" />
