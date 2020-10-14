@@ -1,0 +1,10 @@
+spring:
+  mail:
+    host: smtp.163.com
+    username: i102443@163.com
+    password: ROCBSSQMYLZBPXZP
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
