@@ -3,12 +3,16 @@ package com.study.elasticsearch;
 import com.alibaba.fastjson.JSON;
 import com.study.elasticsearch.domian.UserInfo;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
@@ -19,11 +23,19 @@ import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.TermQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 class ElasticSearchApplicationTests {
@@ -130,5 +142,55 @@ class ElasticSearchApplicationTests {
 		DeleteRequest deleteRequest = new DeleteRequest("blog", "1");
 		DeleteResponse response = restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT);
 		System.out.println(response.status());
+	}
+
+	/**
+	 * 批量操作
+	 */
+	@Test
+	public void bulkRequest() throws IOException {
+		BulkRequest bulkRequest = new BulkRequest();
+		bulkRequest.timeout("10s");
+		List<UserInfo> userInfoList = new ArrayList<>();
+		userInfoList.add(new UserInfo("harlan", 20));
+		userInfoList.add(new UserInfo("PenXiaoC",26));
+		userInfoList.add(new UserInfo("HuangBingY", 23));
+		userInfoList.add(new UserInfo("ChengXiaoL", 22));
+
+		//批处理请求
+		for (int i = 0; i < userInfoList.size(); i++) {
+			bulkRequest.add(new IndexRequest("blog")
+					.id(""+(i+1)).source(JSON.toJSONString(userInfoList.get(i)), XContentType.JSON));
+		}
+		//执行请求
+		BulkResponse responses = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
+		System.out.println(responses.status());
+
+	}
+
+	/**
+	 * 查询
+	 */
+	@Test
+	void search() throws IOException {
+		SearchRequest searchRequest = new SearchRequest("blog");
+		//构建查询条件
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		//构建查询
+		TermQueryBuilder termQuery = QueryBuilders.termQuery("name", "harlan");
+
+		sourceBuilder.query(termQuery);
+		sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+		//分页
+		sourceBuilder.from(0);
+		sourceBuilder.size(1);
+		//放入请求
+		searchRequest.source(sourceBuilder);
+		//执行请求
+		SearchResponse response = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+		//获取内容
+		for (SearchHit hit : response.getHits().getHits()) {
+			System.out.println(hit.getSourceAsMap());
+		}
 	}
 }
