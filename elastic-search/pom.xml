@@ -16,6 +16,8 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<!-- 自定义es版本依赖 保证和本地版本一致 -->
+		<elasticsearch.version>7.9.2</elasticsearch.version>
 	</properties>
 
 	<dependencies>
@@ -26,6 +28,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.6</version>
 		</dependency>
 
 		<dependency>
