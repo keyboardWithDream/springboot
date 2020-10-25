@@ -15,7 +15,6 @@
         <option value="$PROJECT_DIR$/auto-config/pom.xml" />
         <option value="$PROJECT_DIR$/logging/pom.xml" />
         <option value="$PROJECT_DIR$/web/pom.xml" />
-        <option value="$PROJECT_DIR$/data-jdbc/pom.xml" />
         <option value="$PROJECT_DIR$/data-mybatis/pom.xml" />
         <option value="$PROJECT_DIR$/data-jpa/pom.xml" />
         <option value="$PROJECT_DIR$/cache/pom.xml" />

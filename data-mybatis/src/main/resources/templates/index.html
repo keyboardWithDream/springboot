@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ch" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>主页</title>
+</head>
+<body>
+<h1>查询</h1>
+<table border="1">
+    <tr>
+        <td>部门ID</td>
+        <td>部门名称</td>
+    </tr>
+    <tr th:each="dept:${deptList}">
+        <td th:text="${dept.id}"></td>
+        <td th:text="${dept.departmentName}"></td>
+    </tr>
+</table>
+<a th:href="@{/dept}">查询</a>
+<hr>
+<h1>插入</h1>
+<form th:action="@{/dept}" th:method="post">
+    <label for="id">部门ID：</label><input type="text" name="id" id="id">
+    <label for="departmentName">部门名称：</label><input type="text" name="departmentName" id="departmentName">
+    <input type="submit" value="插入">
+</form>
+<hr>
+<h1>修改</h1>
+<form th:action="@{/dept/update}" th:method="post">
+    <label for="id1">部门ID：</label><input type="text" name="id" id="id1">
+    <label for="departmentName1">部门名称：</label><input type="text" name="departmentName" id="departmentName1">
+    <input type="submit" value="修改">
+</form>
+<hr>
+<h1>删除</h1>
+<form th:action="@{/dept/delete}" th:method="post">
+    <label for="id2">部门ID：</label><input type="text" name="id" id="id2">
+    <input type="submit" value="删除">
+</form>
+</body>
+</html>

@@ -1,10 +1,12 @@
 package com.study.mybatis.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author Harlan
  * @Date 2020/10/8
  */
-public class Department {
+public class Department implements Serializable {
 
     private Integer id;
     private String departmentName;

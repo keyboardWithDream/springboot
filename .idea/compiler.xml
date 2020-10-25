@@ -11,7 +11,6 @@
         <module name="cache" />
         <module name="amqp" />
         <module name="data-jpa" />
-        <module name="data-jdbc" />
         <module name="springboot" />
         <module name="test2" />
         <module name="security" />
@@ -25,6 +24,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="data-jdbc" target="11" />
       <module name="springboot" target="11" />
     </bytecodeTargetLevel>
   </component>

@@ -29,7 +29,7 @@ public class DruidConfig {
 
     @Bean
     public ServletRegistrationBean<StatViewServlet> statViewServlet(){
-        ServletRegistrationBean<StatViewServlet> servlet = new ServletRegistrationBean<>(new StatViewServlet());
+        ServletRegistrationBean<StatViewServlet> servlet = new ServletRegistrationBean<>(new StatViewServlet(), "/druid/*");
         Map<String, String> paramsMap = new HashMap<>(4);
         paramsMap.put("loginUsername", "admin");
         paramsMap.put("loginPassword", "123456");
